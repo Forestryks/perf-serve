@@ -1,24 +1,11 @@
 from pathlib import Path
-import requests
 from server import start_server
 from time import sleep
 from perf_script import run_perf_script
-from args import Args, parse_args
+from args import parse_args
 from interfaces import get_local_ips
-from net_utils import check_reachable_by_local_addr
-
-
-def serve(args: Args, perf_script_output: Path):
-    return start_server(perf_script_output, args.address, args.port)
-
-    # my_ip = get_my_ip()
-    # data_url = f"http://{my_ip}:{http_server.server_address[1]}/"
-    # print(f"Public: {data_url}")
-    # print(f"Url: https://profiler.forestryks.org/from-url/{urllib.parse.quote(data_url, safe='')}")
-
-
-def get_my_ip() -> str:
-    return requests.get('https://api.ipify.org').text
+import urllib.parse
+import requests
 
 
 def check_file_exists(path: Path):
@@ -27,11 +14,28 @@ def check_file_exists(path: Path):
         exit(1)
 
 
-def find_possible_urls(port: int):
+def make_link(label: str, url: str):
+    escape_mask = '\033]8;;{}\033\\{}\033]8;;\033\\'
+    return escape_mask.format(url, label)
+
+
+def get_my_ip() -> str:
+    return requests.get('https://api.ipify.org').text
+
+
+def display_url_via_ip(ip: str, port: int, prefix: str, name: str):
+    data_url = f"http://{ip}:{port}/"
+    url = f"https://profiler.forestryks.org/from-url/{urllib.parse.quote(data_url, safe='')}"
+    link = make_link(name, url)
+    print(f"{prefix} {link}")
+
+
+def display_possible_urls(port: int):
+    display_url_via_ip(get_my_ip(), port, "🚀", "via public ip")
+    print("Other variants:")
     ips = get_local_ips()
     for ip in ips:
-        check_reachable_by_local_addr(ip, port)
-        # print(ip)
+        display_url_via_ip(ip, port, "➤", f"via {ip}")
 
 
 def main():
@@ -41,7 +45,7 @@ def main():
     perf_script_output = run_perf_script(args.path)
     http_server = start_server(Path(perf_script_output.name), args.address, args.port)
 
-    find_possible_urls(http_server.server_address[1])
+    display_possible_urls(http_server.server_address[1])
 
     while True:
         sleep(1)
@@ -50,8 +54,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO: detect and display more ips
 # TODO: detect closed ports
 # TODO: easy installation
 # TODO: better logs and output
-# TODO: use hyperlinks formatting when possible
+# TODO: detect that hyperlinks are not supported

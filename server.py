@@ -16,8 +16,8 @@ class _RequestHandler(BaseHTTPRequestHandler):
         with self.served_file.open() as f:
             self.wfile.write(bytes(f.read(), "utf8"))
 
-    # def log_request(self, code='-', size='-'):
-    #     return
+    def log_request(self, code='-', size='-'):
+        return
 
 
 def start_server(path: Path, address: str, port: int) -> HTTPServer:
