@@ -1,10 +1,12 @@
+from .server import start_server
+from .perf_script import run_perf_script
+from .args import Args, parse_args
+from .interfaces import get_local_ips
+
 from pathlib import Path
-from server import start_server
 from time import sleep
-from perf_script import run_perf_script
-from args import Args, parse_args
-from interfaces import get_local_ips
 from typing import List, Tuple, Optional
+
 import urllib.parse
 import requests
 

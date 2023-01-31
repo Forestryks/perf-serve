@@ -1,7 +1,7 @@
-import threading
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import threading
 
 class _RequestHandler(BaseHTTPRequestHandler):
     def __init__(self, served_file: Path, *args, **kwargs) -> None:
