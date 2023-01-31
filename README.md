@@ -11,3 +11,5 @@ Due to https://github.com/firefox-devtools/profiler/issues/3766 it is currently 
 # Installation
 
 `python3 -m pip install perf_serve`
+
+Because _perf_serve_ serves a file via http, you need to set `Insecure content = Allow` in site options for [profiler.forestryks.org](http://profiler.forestryks.org/).
